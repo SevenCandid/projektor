@@ -1,4 +1,8 @@
-const API_BASE = 'http://localhost:5000/api';
+const PROD_API_URL = 'https://projektor-backend.onrender.com/api';
+const LOCAL_API_URL = 'http://localhost:5000/api';
+
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = isLocalhost ? LOCAL_API_URL : PROD_API_URL;
 
 // Helper to handle API requests
 async function fetchAPI(endpoint, options = {}) {
