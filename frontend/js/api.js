@@ -1,4 +1,4 @@
-const PROD_API_URL = 'https://projektor-backend.onrender.com/api';
+const PROD_API_URL = 'https://projektor.onrender.com/api';
 const LOCAL_API_URL = 'http://localhost:5000/api';
 
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
