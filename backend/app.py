@@ -28,6 +28,12 @@ CORS(app, supports_credentials=True)
 # Secret key is required for session management
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "fallback_secret_key_if_not_set")
 
+# Required for cross-origin cookies (Vercel Frontend -> Render Backend)
+app.config.update(
+    SESSION_COOKIE_SAMESITE='None',
+    SESSION_COOKIE_SECURE=True
+)
+
 # Register Blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(projects_bp, url_prefix='/api/projects')
