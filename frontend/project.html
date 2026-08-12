@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details - Projektor</title>
+    <link rel="stylesheet" href="css/style.css?v=5">
+    <style>
+        .details-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .back-btn:hover {
+            color: var(--primary);
+        }
+        
+        .single-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: var(--glass-blur);
+        }
+        
+        .project-title {
+            font-size: 2.2rem;
+            margin: 1.5rem 0 1rem;
+            line-height: 1.3;
+        }
+        
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        
+        .meta-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .meta-value {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+        
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tech-tag {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .desc-text {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            white-space: pre-wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .project-title { font-size: 1.5rem; }
+            .single-card { padding: 1.5rem; }
+            .details-container { padding: 1rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:var(--accent);stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Projektor</span>
+        </a>
+
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="margin-left: auto; margin-right: 0.5rem;">
+            <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+
+        <div class="nav-links-desktop" id="nav-links-desktop"></div>
+    </nav>
+
+    <!-- Mobile bottom nav OUTSIDE nav -->
+    <div class="nav-links" id="nav-links"></div>
+
+    <main id="main-content">
+        <div id="loader" class="loader"></div>
+        <div id="error-box" class="error-msg" style="display: none;"></div>
+        
+        <div id="project-container" style="display: none;">
+            <!-- Injected by JS -->
+        </div>
+    </main>
+
+    <script src="js/api.js?v=6"></script>
+    <script src="js/nav.js?v=7"></script>
+    <script>
+        let globalProjectId = null;
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initSharedNav(null);
+            loadProjectDetails();
+        });
+
+        async function loadProjectDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            globalProjectId = urlParams.get('id');
+            const projectId = globalProjectId;
+            const loader = document.getElementById('loader');
+            const container = document.getElementById('project-container');
+            const errorBox = document.getElementById('error-box');
+            
+            if (!projectId) {
+                loader.style.display = 'none';
+                errorBox.textContent = 'No project ID provided.';
+                errorBox.style.display = 'block';
+                return;
+            }
+            
+            const res = await fetchAPI(`/projects/${projectId}`);
+            loader.style.display = 'none';
+            
+            if (!res.success) {
+                errorBox.textContent = res.error;
+                errorBox.style.display = 'block';
+                return;
+            }
+            
+            const p = res.data;
+            const statusClass = p.status.includes('Completed') ? 'status-Completed' : 'status-In';
+            const techHtml = p.technologies.map(t => `<span class="tech-tag">${t.name}</span>`).join('');
+            
+            let imageSection = '';
+            if (p.image_url) {
+                const urls = p.image_url.split(',').filter(u => u.trim() !== '');
+                if (urls.length === 1) {
+                    imageSection = `<img src="${getImageUrl(urls[0])}" alt="Project Image" class="smart-image-single">`;
+                } else if (urls.length > 1) {
+                    const imagesHtml = urls.map(url => `<img src="${getImageUrl(url)}" alt="Project Image">`).join('');
+                    imageSection = `
+                    <div class="details-carousel">
+                        ${imagesHtml}
+                    </div>`;
+                }
+            }
+            
+            container.innerHTML = `
+                <div class="details-container">
+                    <a href="javascript:history.back()" class="back-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        Back to Feed
+                    </a>
+                    
+                    <div class="single-card">
+                        <div class="card-header">
+                            <div class="author-avatar">${p.author_image ? `<img src="${getImageUrl(p.author_image)}" alt="Author" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` : p.author.charAt(0)}</div>
+                            <div class="author-info">
+                                <span class="author-name">${p.author}</span>
+                                <span class="author-meta">${p.institution || 'Independent'}</span>
+                            </div>
+                            <span class="status-badge ${statusClass}" style="margin-left: auto;">${p.status}</span>
+                        </div>
+                        
+                        <h1 class="project-title">${p.title}</h1>
+                        
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="meta-label">Category</span>
+                                <span class="meta-value">${p.category}</span>
+                            </div>
+                            ${p.academic_year ? `
+                            <div class="meta-item">
+                                <span class="meta-label">Academic Year</span>
+                                <span class="meta-value">${p.academic_year}</span>
+                            </div>` : ''}
+                            <div class="meta-item">
+                                <span class="meta-label">Posted On</span>
+                                <span class="meta-value">${new Date(p.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        
+                        ${imageSection}
+                        
+                        <h3 class="section-title">About the Project</h3>
+                        <div class="desc-text">${p.description}</div>
+                        
+                        <h3 class="section-title">Technologies & Skills</h3>
+                        <div class="tech-tags">
+                            ${techHtml || '<span style="color: var(--text-muted)">None specified</span>'}
+                        </div>
+                        
+                        ${(p.github_url || p.demo_url) ? `
+                        <h3 class="section-title">Project Links</h3>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="btn btn-outline" style="flex: 1; text-align: center;">View on GitHub</a>` : ''}
+                            ${p.demo_url ? `<a href="${p.demo_url}" target="_blank" class="btn btn-primary" style="flex: 1; text-align: center;">Live Demo</a>` : ''}
+                        </div>
+                        ` : ''}
+                        
+                        <div class="interaction-bar" style="margin-top: 2rem;">
+                            <button class="interaction-btn like-btn ${p.has_liked ? 'liked' : ''}" data-id="${p.id}" onclick="toggleLikePage(this)">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="${p.has_liked ? 'var(--danger)' : 'none'}" stroke="${p.has_liked ? 'var(--danger)' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                <span class="like-count">${p.like_count || 0}</span>
+                            </button>
+                            <button class="interaction-btn comment-btn" onclick="document.getElementById('comment-input').focus()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                                </svg>
+                                <span class="comment-count-display">${p.comment_count || 0}</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="single-card" style="margin-top: 2rem;">
+                        <h3 class="section-title">Comments</h3>
+                        
+                        <div class="comment-input-area" style="padding: 0; border: none; margin-bottom: 2rem;">
+                            <input type="text" id="comment-input" placeholder="Add a comment..." onkeypress="if(event.key === 'Enter') submitPageComment()">
+                            <button onclick="submitPageComment()">Post</button>
+                        </div>
+                        
+                        <div class="comment-list" id="page-comment-list" style="padding: 0;">
+                            <div style="text-align: center; color: var(--text-muted);"><div class="loader" style="width:24px;height:24px;border-width:2px;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.style.display = 'block';
+            
+            loadPageComments(projectId);
+        }
+        
+        async function toggleLikePage(btnElement) {
+            const isLiked = btnElement.classList.contains('liked');
+            const countSpan = btnElement.querySelector('.like-count');
+            let count = parseInt(countSpan.textContent) || 0;
+            
+            if (isLiked) {
+                btnElement.classList.remove('liked');
+                btnElement.querySelector('svg').setAttribute('fill', 'none');
+                btnElement.querySelector('svg').setAttribute('stroke', 'currentColor');
+                count = Math.max(0, count - 1);
+            } else {
+                btnElement.classList.add('liked');
+                btnElement.querySelector('svg').setAttribute('fill', 'var(--danger)');
+                btnElement.querySelector('svg').setAttribute('stroke', 'var(--danger)');
+                count += 1;
+            }
+            countSpan.textContent = count;
+            
+            const res = await toggleLike(globalProjectId);
+            if (!res.success) {
+                if (res.error === "Login required") {
+                    window.location.href = 'login.html';
+                }
+            } else {
+                countSpan.textContent = res.data.like_count;
+            }
+        }
+        
+        async function loadPageComments(id) {
+            const list = document.getElementById('page-comment-list');
+            const res = await getComments(id);
+            if (res.success) {
+                renderPageComments(res.data);
+            } else {
+                list.innerHTML = `<p style="color: var(--danger); text-align:center;">Failed to load comments.</p>`;
+            }
+        }
+        
+        async function renderPageComments(comments) {
+            const list = document.getElementById('page-comment-list');
+            list.innerHTML = '';
+            
+            if (comments.length === 0) {
+                list.innerHTML = `<p style="text-align:center; color: var(--text-muted); margin-top:2rem;">No comments yet. Be the first!</p>`;
+                return;
+            }
+            
+            const authRes = await checkAuth();
+            const currentUserId = authRes.success ? authRes.data.id : null;
+            
+            comments.forEach(c => {
+                const date = new Date(c.created_at).toLocaleDateString();
+                const canDelete = currentUserId === c.user_id;
+                
+                const avatarContent = c.profile_image 
+                    ? `<img src="${getImageUrl(c.profile_image)}" alt="User" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`
+                    : c.full_name.charAt(0);
+                    
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+                item.innerHTML = `
+                    <div class="comment-avatar">${avatarContent}</div>
+                    <div class="comment-content">
+                        <div class="comment-author">
+                            <span>${c.full_name}</span>
+                            <span class="comment-date">${date}</span>
+                        </div>
+                        <div class="comment-text">${c.content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+                        ${canDelete ? `<button class="delete-comment-btn" onclick="deletePageCommentUI(${c.id}, this)">Delete</button>` : ''}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        async function submitPageComment() {
+            const input = document.getElementById('comment-input');
+            const content = input.value.trim();
+            if (!content) return;
+            
+            input.disabled = true;
+            const res = await postComment(globalProjectId, content);
+            input.disabled = false;
+            
+            if (res.success) {
+                input.value = '';
+                const commentsRes = await getComments(globalProjectId);
+                if (commentsRes.success) {
+                    renderPageComments(commentsRes.data);
+                    const countDisplay = document.querySelector('.comment-count-display');
+                    if (countDisplay) countDisplay.textContent = commentsRes.data.length;
+                }
+            } else {
+                if (res.error === "Login required") {
+                    window.location.href = 'login.html';
+                } else {
+                    alert(res.error || "Failed to post comment");
+                }
+            }
+        }
+        
+        async function deletePageCommentUI(commentId, btnElement) {
+            if (!confirm("Are you sure you want to delete this comment?")) return;
+            
+            const res = await deleteComment(commentId);
+            if (res.success) {
+                btnElement.closest('.comment-item').remove();
+                
+                const countDisplay = document.querySelector('.comment-count-display');
+                if (countDisplay) {
+                    const currentCount = parseInt(countDisplay.textContent) || 1;
+                    countDisplay.textContent = currentCount - 1;
+                }
+                
+                const list = document.getElementById('page-comment-list');
+                if (list.children.length === 0) {
+                    list.innerHTML = `<p style="text-align:center; color: var(--text-muted); margin-top:2rem;">No comments yet. Be the first!</p>`;
+                }
+            } else {
+                alert(res.error || "Failed to delete comment");
+            }
+        }
+    </script>
+</body>
+</html>

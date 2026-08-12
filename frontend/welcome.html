@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projektor — Discover. Build. Showcase.</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        nav { display: none !important; }
+
+        .welcome-page {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(145deg, #1c0900 0%, #2e1500 45%, #0c1220 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem 1.8rem 2.2rem;
+            overflow: hidden;
+        }
+
+        /* Ambient glows */
+        .welcome-page::before {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(249,115,22,0.25) 0%, transparent 65%);
+            top: -150px; left: -100px;
+            pointer-events: none;
+        }
+        .welcome-page::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 65%);
+            bottom: -100px; right: -100px;
+            pointer-events: none;
+        }
+
+        /* Theme toggle */
+        .theme-btn {
+            position: absolute;
+            top: 1.2rem; right: 1.2rem;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: rgba(255,255,255,0.6);
+            transition: color 0.2s, background 0.2s;
+        }
+        .theme-btn:hover { color: #f97316; background: rgba(249,115,22,0.1); }
+
+        /* Top: Logo */
+        .welcome-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+            animation: fadeUp 0.5s ease forwards;
+            opacity: 0; transform: translateY(16px);
+            flex-shrink: 0;
+        }
+        .welcome-logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #f97316, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Middle: Hero content */
+        .welcome-body {
+            position: relative;
+            z-index: 1;
+            animation: fadeUp 0.5s ease 0.1s forwards;
+            opacity: 0; transform: translateY(16px);
+        }
+
+        .welcome-body h1 {
+            font-size: 3rem;
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+            margin: 0 0 0.8rem;
+        }
+
+        .welcome-body h1 em {
+            font-style: normal;
+            background: linear-gradient(to right, #f97316, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-body p {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            max-width: 320px;
+        }
+
+        .welcome-features {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .welcome-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.83rem;
+        }
+
+        .welcome-feature::before {
+            content: '';
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #f97316;
+            flex-shrink: 0;
+        }
+
+        /* Bottom: Buttons */
+        .welcome-actions {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            animation: fadeUp 0.5s ease 0.2s forwards;
+            opacity: 0; transform: translateY(16px);
+        }
+
+        .btn-signin {
+            display: block;
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #f97316, #f59e0b);
+            color: #fff;
+            border: none;
+            border-radius: 13px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 5px 20px rgba(249,115,22,0.4);
+            transition: opacity 0.2s, transform 0.15s;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .btn-signin:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .btn-signup {
+            display: block;
+            width: 100%;
+            padding: 0.9rem;
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,0.2);
+            border-radius: 13px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .btn-signup:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.35); }
+
+        .explore-link {
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .explore-link a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: underline;
+        }
+
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* On desktop, redirect automatically to index */
+        @media (min-width: 721px) {
+            .desktop-notice {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                color: rgba(255,255,255,0.5);
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="welcome-page">
+
+    <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <!-- Logo -->
+    <a href="index.html" class="welcome-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#gl)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <defs>
+                <linearGradient id="gl" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f97316"/>
+                    <stop offset="100%" style="stop-color:#f59e0b"/>
+                </linearGradient>
+            </defs>
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        <span class="welcome-logo-text">Projektor</span>
+    </a>
+
+    <!-- Hero -->
+    <div class="welcome-body">
+        <h1>Discover.<br>Build.<br><em>Showcase.</em></h1>
+        <p>Your academic project portfolio — built by students, for students. Share what you've created with the world.</p>
+
+        <div class="welcome-features">
+            <div class="welcome-feature">Discover student innovations</div>
+            <div class="welcome-feature">Showcase your projects</div>
+            <div class="welcome-feature">Build your academic portfolio</div>
+        </div>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="welcome-actions">
+        <a href="login.html" class="btn-signin">Sign In</a>
+        <a href="register.html" class="btn-signup">Create Account</a>
+        <p class="explore-link">Just browsing? <a href="index.html">Explore projects</a></p>
+    </div>
+
+</div>
+
+<script src="js/api.js"></script>
+<script>
+    // On desktop, redirect to index
+    if (window.innerWidth >= 721) {
+        window.location.replace('index.html');
+    }
+    // If already logged in, go to dashboard
+    checkAuth().then(res => {
+        if (res.success) window.location.replace('dashboard.html');
+    });
+</script>
+</body>
+</html>

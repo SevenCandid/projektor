@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Projektor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-page {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 6rem;
+        }
+
+        /* ── Profile Hero ── */
+        .profile-hero {
+            background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(245,158,11,0.06));
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.2rem;
+            position: relative;
+            animation: fadeUp 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        .profile-avatar {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 1rem;
+            box-shadow: 0 0 0 4px rgba(249,115,22,0.2), 0 8px 24px rgba(249,115,22,0.25);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-bio {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+
+        .profile-edit-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(249,115,22,0.1);
+            border: 1px solid rgba(249,115,22,0.3);
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s;
+        }
+
+        .profile-edit-btn:hover { background: rgba(249,115,22,0.2); }
+
+        /* ── Info Cards ── */
+        .info-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 1rem;
+            animation: fadeUp 0.5s ease 0.1s forwards;
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        .info-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row:last-child { border-bottom: none; }
+
+        .info-label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .info-value.empty { color: var(--text-muted); font-style: italic; font-weight: 400; }
+
+        /* ── Edit Form (hidden by default) ── */
+        .edit-form-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.4rem;
+            margin-bottom: 1rem;
+            display: none;
+            animation: fadeUp 0.3s ease forwards;
+        }
+
+        .edit-form-section.active { display: block; }
+
+        .edit-form-section .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .edit-form-section label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+        }
+
+        .edit-form-section input,
+        .edit-form-section textarea {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .edit-form-section input:focus,
+        .edit-form-section textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        /* ── Danger / Logout ── */
+        .danger-section {
+            margin-bottom: 1rem;
+            animation: fadeUp 0.5s ease 0.2s forwards;
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: transparent;
+            border: 1.5px solid rgba(239,68,68,0.4);
+            border-radius: 12px;
+            color: #ef4444;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239,68,68,0.08);
+            border-color: rgba(239,68,68,0.7);
+        }
+
+        .success-toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--success);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        .success-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .profile-hero { padding: 1.5rem 1rem; }
+            .profile-name { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:var(--accent);stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Projektor</span>
+        </a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="margin-left: auto; margin-right: 0.5rem;">
+            <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+        <div class="nav-links-desktop" id="nav-links-desktop"></div>
+    </nav>
+    <div class="nav-links" id="nav-links"></div>
+
+    <div id="success-toast" class="success-toast">✓ Profile updated!</div>
+
+    <main>
+        <div class="profile-page">
+            <div id="loader" class="loader" style="display:none;"></div>
+            <div id="error-box" class="error-msg" style="display:none;"></div>
+
+            <!-- VIEW MODE -->
+            <div id="view-mode" style="display:none;">
+
+                <!-- Hero -->
+                <div class="profile-hero">
+                    <button class="profile-edit-btn" onclick="enterEditMode()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        Edit
+                    </button>
+                    <div class="profile-avatar" id="view-avatar">?</div>
+                    <div class="profile-name" id="view-name">—</div>
+                    <div style="color: var(--primary); font-size: 0.82rem; font-weight: 600; margin-top: 0.2rem;" id="view-program-inst"></div>
+                    <div class="profile-bio" id="view-bio"></div>
+                </div>
+
+                <!-- Academic Info -->
+                <div class="info-section">
+                    <div class="info-section-title">Academic Info</div>
+                    <div class="info-row">
+                        <span class="info-label">Institution</span>
+                        <span class="info-value" id="view-institution">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Program</span>
+                        <span class="info-value" id="view-program">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Level</span>
+                        <span class="info-value" id="view-level">—</span>
+                    </div>
+                </div>
+
+                <!-- Account Info -->
+                <div class="info-section">
+                    <div class="info-section-title">Account</div>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="view-email">—</span>
+                    </div>
+                </div>
+
+                <!-- Logout -->
+                <div class="danger-section">
+                    <button class="logout-btn" onclick="logout()">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+
+            <!-- EDIT MODE -->
+            <div id="edit-mode" style="display:none;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.2rem;">
+                    <button onclick="exitEditMode()" style="background:none; border:none; cursor:pointer; color:var(--text-muted); display:flex; align-items:center; gap:0.4rem; font-size:0.9rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        Back
+                    </button>
+                    <h3 style="font-size:1.1rem; font-weight:700;">Edit Profile</h3>
+                </div>
+
+                <div class="edit-form-section active">
+                    <div class="info-section-title">Profile Picture</div>
+                    <div class="form-group" style="display:flex; align-items:center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="profile-avatar" id="edit-avatar-preview" style="width: 60px; height: 60px; font-size: 1.5rem; margin-bottom: 0; box-shadow: none;">?</div>
+                        <div>
+                            <input type="file" id="profile_image_input" accept="image/*" style="display:none;" onchange="previewProfileImage(event)">
+                            <button onclick="document.getElementById('profile_image_input').click()" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Change Picture</button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section-title">Personal Details</div>
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" id="full_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" rows="3" placeholder="Tell others about yourself..."></textarea>
+                    </div>
+                </div>
+
+                <div class="edit-form-section active">
+                    <div class="info-section-title">Academic Info</div>
+                    <div class="form-group">
+                        <label for="institution">Institution</label>
+                        <input type="text" id="institution" placeholder="e.g. University of Energy and Natural Resources">
+                    </div>
+                    <div class="form-group">
+                        <label for="program">Program</label>
+                        <input type="text" id="program" placeholder="e.g. BSc Computer Engineering">
+                    </div>
+                    <div class="form-group">
+                        <label for="level">Level</label>
+                        <input type="text" id="level" placeholder="e.g. Level 300">
+                    </div>
+                </div>
+
+                <div id="edit-error" class="error-msg" style="display:none;"></div>
+
+                <div class="edit-actions">
+                    <button class="btn btn-outline" style="flex:1;" onclick="exitEditMode()">Cancel</button>
+                    <button class="btn btn-primary" style="flex:2;" onclick="saveProfile()">Save Changes</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/api.js?v=6"></script>
+    <script src="js/nav.js?v=7"></script>
+    <script>
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authRes = await initSharedNav('profile');
+            if (!authRes.success) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUserId = authRes.data.user_id;
+            loadProfileData(currentUserId);
+        });
+
+        async function loadProfileData(userId) {
+            document.getElementById('loader').style.display = 'block';
+            const res = await fetchAPI(`/users/${userId}`);
+            document.getElementById('loader').style.display = 'none';
+
+            if (!res.success) {
+                document.getElementById('error-box').textContent = res.error;
+                document.getElementById('error-box').style.display = 'block';
+                return;
+            }
+
+            const u = res.data;
+
+            // Fill view mode
+            if (u.profile_image) {
+                const imgHtml = `<img src="${getImageUrl(u.profile_image)}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                document.getElementById('view-avatar').innerHTML = imgHtml;
+                document.getElementById('edit-avatar-preview').innerHTML = imgHtml;
+            } else {
+                const init = u.full_name ? u.full_name.charAt(0).toUpperCase() : '?';
+                document.getElementById('view-avatar').textContent = init;
+                document.getElementById('edit-avatar-preview').textContent = init;
+            }
+            
+            document.getElementById('view-name').textContent = u.full_name || '—';
+
+            const progInst = [u.program, u.institution].filter(Boolean).join(' · ');
+            document.getElementById('view-program-inst').textContent = progInst;
+
+            document.getElementById('view-bio').textContent = u.bio || '';
+            document.getElementById('view-bio').style.display = u.bio ? 'block' : 'none';
+
+            setInfo('view-institution', u.institution);
+            setInfo('view-program', u.program);
+            setInfo('view-level', u.level);
+            setInfo('view-email', u.email);
+
+            // Pre-fill edit fields
+            document.getElementById('full_name').value = u.full_name || '';
+            document.getElementById('bio').value = u.bio || '';
+            document.getElementById('institution').value = u.institution || '';
+            document.getElementById('program').value = u.program || '';
+            document.getElementById('level').value = u.level || '';
+
+            document.getElementById('view-mode').style.display = 'block';
+        }
+
+        function setInfo(id, val) {
+            const el = document.getElementById(id);
+            if (val) {
+                el.textContent = val;
+                el.classList.remove('empty');
+            } else {
+                el.textContent = 'Not set';
+                el.classList.add('empty');
+            }
+        }
+
+        function enterEditMode() {
+            document.getElementById('view-mode').style.display = 'none';
+            document.getElementById('edit-mode').style.display = 'block';
+        }
+
+        function exitEditMode() {
+            document.getElementById('edit-mode').style.display = 'none';
+            document.getElementById('view-mode').style.display = 'block';
+        }
+
+        let selectedImageFile = null;
+
+        function previewProfileImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedImageFile = file;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    document.getElementById('edit-avatar-preview').innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function saveProfile() {
+            const editErr = document.getElementById('edit-error');
+            editErr.style.display = 'none';
+
+            if (selectedImageFile) {
+                const formData = new FormData();
+                formData.append('image', selectedImageFile);
+                const uploadRes = await fetchAPI('/users/me/image', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!uploadRes.success) {
+                    editErr.textContent = uploadRes.error || "Failed to upload image";
+                    editErr.style.display = 'block';
+                    return;
+                }
+                selectedImageFile = null;
+            }
+
+            const res = await fetchAPI(`/users/me`, {
+                method: 'PUT',
+                body: {
+                    full_name: document.getElementById('full_name').value,
+                    bio: document.getElementById('bio').value,
+                    institution: document.getElementById('institution').value,
+                    program: document.getElementById('program').value,
+                    level: document.getElementById('level').value,
+                }
+            });
+
+            if (res.success) {
+                exitEditMode();
+                loadProfileData(currentUserId);
+                // Also update the nav bar with new data
+                initSharedNav('profile');
+                showToast();
+            } else {
+                editErr.textContent = res.error;
+                editErr.style.display = 'block';
+            }
+        }
+
+        function showToast() {
+            const t = document.getElementById('success-toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

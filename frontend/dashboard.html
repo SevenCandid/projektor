@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Projektor</title>
+    <link rel="stylesheet" href="css/style.css?v=5">
+    <style>
+        /* Profile Hero Banner */
+        .profile-banner {
+            background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(245,158,11,0.08));
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            animation: slideUp 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 4px rgba(249,115,22,0.2);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .profile-actions .btn {
+            padding: 0.4rem 0.9rem;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: slideUp 0.5s ease 0.1s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-card {
+            flex: 1;
+            padding: 0.7rem 0.5rem;
+            text-align: center;
+            transition: background 0.2s;
+            border-right: 1px solid var(--border);
+            min-width: 0;
+        }
+
+        .stat-card:last-child {
+            border-right: none;
+        }
+
+        .stat-card:hover {
+            background: rgba(249,115,22,0.06);
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* Section header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            animation: slideUp 0.5s ease 0.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .section-header h3 {
+            font-size: 1.1rem;
+        }
+
+        /* Project Cards Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            animation: slideUp 0.5s ease 0.3s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem;
+            backdrop-filter: var(--glass-blur);
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(249,115,22,0.3);
+            box-shadow: 0 8px 24px rgba(249,115,22,0.1);
+        }
+
+        .project-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .project-card-category {
+            font-size: 0.72rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .project-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .project-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .project-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 768px) {
+            .profile-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem 1rem;
+            }
+            .profile-avatar-large {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            .profile-info h2 {
+                font-size: 1.2rem;
+            }
+            .profile-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            .stats-row {
+                gap: 0.5rem;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:var(--accent);stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Projektor</span>
+        </a>
+
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="margin-left: auto; margin-right: 0.5rem;">
+            <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+
+        <div class="nav-links-desktop" id="nav-links-desktop"></div>
+    </nav>
+
+    <!-- Mobile bottom nav -->
+    <div class="nav-links" id="nav-links"></div>
+
+    <main>
+        <div id="loader" class="loader" style="display: none;"></div>
+        <div id="error-box" class="error-msg" style="display: none;"></div>
+        <div id="dashboard-content" style="display:none;">
+            <!-- Profile Banner -->
+            <div class="profile-banner">
+                <div class="profile-avatar-large" id="profile-avatar">?</div>
+                <div class="profile-info">
+                    <h2 id="profile-name">Loading...</h2>
+                    <p id="profile-sub"></p>
+                </div>
+                <div class="profile-actions">
+                    <a href="profile.html" class="btn btn-outline">Edit Profile</a>
+                    <a href="edit_project.html" class="btn btn-primary">+ New Project</a>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-total">0</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-completed">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-progress">0</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="section-header">
+                <h3>My Projects</h3>
+            </div>
+            <div class="projects-grid" id="my-projects-grid"></div>
+        </div>
+    </main>
+
+    <script src="js/api.js?v=6"></script>
+    <script src="js/nav.js?v=7"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authRes = await initSharedNav('dashboard');
+            if (!authRes.success) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await loadDashboard(authRes.data);
+        });
+
+        async function loadDashboard(user) {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('dashboard-content');
+            loader.style.display = 'block';
+
+            const res = await fetchAPI(`/users/${user.user_id}`);
+            loader.style.display = 'none';
+
+            if (!res.success) {
+                document.getElementById('error-box').textContent = res.error;
+                document.getElementById('error-box').style.display = 'block';
+                return;
+            }
+
+            const data = res.data;
+            const projects = data.projects || [];
+
+            // Fill profile banner
+            document.getElementById('profile-avatar').textContent = data.full_name.charAt(0).toUpperCase();
+            document.getElementById('profile-name').textContent = data.full_name;
+            document.getElementById('profile-sub').textContent =
+                [data.program, data.institution, data.level].filter(Boolean).join(' · ') || 'No institution set';
+
+            // Stats
+            const completed = projects.filter(p => p.status === 'Completed').length;
+            const inProgress = projects.filter(p => p.status === 'In Progress').length;
+            document.getElementById('stat-total').textContent = projects.length;
+            document.getElementById('stat-completed').textContent = completed;
+            document.getElementById('stat-progress').textContent = inProgress;
+
+            content.style.display = 'block';
+            renderProjects(projects);
+        }
+
+        function renderProjects(projects) {
+            const grid = document.getElementById('my-projects-grid');
+
+            if (projects.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <h3>No projects yet</h3>
+                        <p style="margin: 0.5rem 0 1.5rem;">Your portfolio starts here. Create your first project.</p>
+                        <a href="edit_project.html" class="btn btn-primary">+ Create Project</a>
+                    </div>`;
+                return;
+            }
+
+            projects.forEach(p => {
+                const statusClass = p.status === 'Completed' ? 'status-Completed' : 'status-In';
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                let imageSection = '';
+                if (p.image_url) {
+                    const urls = p.image_url.split(',').filter(u => u.trim() !== '');
+                    if (urls.length === 1) {
+                        imageSection = `<img src="${getImageUrl(urls[0])}" alt="Project Image" class="smart-image-single">`;
+                    } else if (urls.length > 1) {
+                        let gridClass = 'grid-more';
+                        if (urls.length === 2) gridClass = 'grid-2';
+                        else if (urls.length === 3) gridClass = 'grid-3';
+                        else if (urls.length === 4) gridClass = 'grid-4';
+                        
+                        const displayUrls = urls.slice(0, 4);
+                        let imagesHtml = '';
+                        displayUrls.forEach((url, idx) => {
+                            if (idx === 3 && urls.length > 4) {
+                                imagesHtml += `<div class="more-images-overlay" data-count="${urls.length - 4}"><img src="${getImageUrl(url)}" alt="Project Image"></div>`;
+                            } else {
+                                imagesHtml += `<img src="${getImageUrl(url)}" alt="Project Image">`;
+                            }
+                        });
+                        
+                        imageSection = `
+                        <div class="smart-image-grid ${gridClass}">
+                            ${imagesHtml}
+                        </div>`;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div class="project-card-top">
+                        <div>
+                            <div class="project-card-category">${p.category}</div>
+                            <div class="project-card-title">${p.title}</div>
+                        </div>
+                        <span class="status-badge ${statusClass}" style="flex-shrink:0;">${p.status}</span>
+                    </div>
+                    ${imageSection}
+                    <p class="project-card-desc">${p.description.substring(0, 110)}...</p>
+                    <div class="project-card-footer">
+                        <span style="color: var(--text-muted); font-size: 0.8rem; display: flex; gap: 0.8rem; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 0.3rem;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                ${p.like_count || 0}
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 0.3rem;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                ${p.comment_count || 0}
+                            </span>
+                        </span>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="project.html?id=${p.id}" class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">View</a>
+                            <a href="edit_project.html?id=${p.id}" class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Edit</a>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projektor - Discover. Build. Showcase.</title>
+    <link rel="stylesheet" href="css/style.css?v=5">
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:var(--accent);stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Projektor</span>
+        </a>
+
+        <!-- Theme toggle always visible in top bar on ALL screen sizes -->
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="margin-left: auto; margin-right: 0.5rem;">
+            <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+
+        <!-- Desktop nav links stay inside nav -->
+        <div class="nav-links-desktop" id="nav-links-desktop"></div>
+    </nav>
+
+
+    <!-- Mobile bottom nav lives OUTSIDE nav to avoid backdrop-filter stacking context -->
+    <div class="nav-links" id="nav-links"></div>
+
+    <main>
+        <section class="hero">
+            <h1>Discover student innovation.</h1>
+            <p>Explore academic, technical, and creative projects built by students from across different institutions.</p>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search projects by title or description...">
+                <button class="btn btn-primary" onclick="loadProjects()">Search</button>
+            </div>
+        </section>
+
+        <section class="feed-layout">
+            <aside class="sidebar-left">
+                <div class="sidebar-card" id="network-card">
+                    <h3>Your Network</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">Join the Projektor community to manage your portfolio and connect with other students.</p>
+                    <a href="register.html" class="btn btn-primary" style="margin-top: 1rem; width: 100%; text-align: center;">Sign Up</a>
+                    <a href="login.html" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; text-align: center;">Login</a>
+                </div>
+            </aside>
+            
+            <div class="feed-center">
+                <div id="loader" class="loader" style="display: none;"></div>
+                <div id="error-box" class="error-msg" style="display: none;"></div>
+                <div class="project-grid" id="project-grid">
+                    <!-- Projects will be injected here by JS -->
+                </div>
+            </div>
+            
+            <aside class="sidebar-right">
+                <div class="sidebar-card">
+                    <h3>Trending Categories</h3>
+                    <ul style="list-style: none; margin-top: 1rem; line-height: 2.2;">
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;"># IoT & Embedded Systems</a></li>
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;"># Web Development</a></li>
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;"># Artificial Intelligence</a></li>
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;"># Machine Learning</a></li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-card" style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem;">About Projektor</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">A database-driven academic platform for student innovation.</p>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="js/api.js?v=6"></script>
+    <script src="js/nav.js?v=7"></script>
+    <script src="js/index.js?v=6"></script>
+</body>
+</html>

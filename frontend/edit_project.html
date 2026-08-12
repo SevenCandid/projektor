@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Project - Projektor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .form-container { max-width: 600px; }
+        .tech-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .tech-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0;
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Image Preview Styles */
+        .image-previews {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .img-preview-card {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .img-preview-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: var(--bg-image);
+        }
+        .img-preview-card .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:var(--accent);stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Projektor</span>
+        </a>
+
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme" style="margin-left: auto; margin-right: 0.5rem;">
+            <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+
+        <div class="nav-links-desktop" id="nav-links-desktop"></div>
+    </nav>
+
+    <!-- Mobile bottom nav OUTSIDE nav -->
+    <div class="nav-links" id="nav-links"></div>
+
+    <main>
+        <div class="form-container">
+            <h2 id="page-title">Create New Project</h2>
+            <div id="error-box" class="error-msg" style="display: none;"></div>
+            
+            <form id="projectForm">
+                <div class="form-group">
+                    <label for="title">Project Title *</label>
+                    <input type="text" id="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category_id">Category *</label>
+                    <select id="category_id" required>
+                        <option value="">Select a category...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" rows="5" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="images">Project Images (Optional)</label>
+                    <input type="file" id="images" name="images" multiple accept="image/*" style="background: var(--bg-card); padding: 0.5rem; border-radius: 8px; width: 100%;">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">You can select multiple images.</p>
+                    <div id="image-previews" class="image-previews"></div>
+                </div>
+
+                
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Archived">Archived</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Technologies Used</label>
+                    <div class="tech-checkboxes" id="tech-container">
+                        <!-- Checkboxes injected here -->
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <label for="custom_technologies" style="font-size: 0.9rem; color: var(--text-muted);">Other Technologies (comma separated)</label>
+                        <input type="text" id="custom_technologies" placeholder="e.g. Rust, GraphQL, Docker">
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="github_url">GitHub URL (Optional)</label>
+                        <input type="url" id="github_url">
+                    </div>
+                    <div class="form-group">
+                        <label for="demo_url">Live Demo URL (Optional)</label>
+                        <input type="url" id="demo_url">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="academic_year">Academic Year (Optional)</label>
+                    <input type="text" id="academic_year" placeholder="e.g. 2023/2024">
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <a href="dashboard.html" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+                    <button type="submit" class="btn btn-primary" style="flex: 2;">Save Project</button>
+                </div>
+            </form>
+            
+            <div id="delete-section" style="display: none; margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Danger Zone</p>
+                <button type="button" class="btn" style="background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger);" onclick="deleteProject()">Delete Project</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/nav.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        const isEditMode = !!projectId;
+        
+        let existingImages = []; // URLs of images already on the server
+        let newFiles = []; // File objects user selected
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authRes = await initSharedNav('dashboard');
+            if (!authRes.success) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (isEditMode) {
+                document.getElementById('page-title').textContent = 'Edit Project';
+                document.getElementById('delete-section').style.display = 'block';
+            }
+            
+            await loadMetadata();
+            
+            if (isEditMode) {
+                await loadProjectData(projectId);
+            }
+        });
+
+        async function loadMetadata() {
+            // Load Categories
+            const catRes = await fetchAPI('/categories');
+            if (catRes.success) {
+                const select = document.getElementById('category_id');
+                catRes.data.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+            }
+            
+            // Load Technologies
+            const techRes = await fetchAPI('/technologies');
+            if (techRes.success) {
+                const container = document.getElementById('tech-container');
+                techRes.data.forEach(t => {
+                    container.innerHTML += `
+                        <label>
+                            <input type="checkbox" name="technologies" value="${t.id}"> ${t.name}
+                        </label>
+                    `;
+                });
+            }
+        }
+
+        async function loadProjectData(id) {
+            const res = await fetchAPI(`/projects/${id}`);
+            if (res.success) {
+                const p = res.data;
+                document.getElementById('title').value = p.title;
+                document.getElementById('category_id').value = p.category_id;
+                document.getElementById('description').value = p.description;
+                document.getElementById('status').value = p.status;
+                document.getElementById('github_url').value = p.github_url || '';
+                document.getElementById('demo_url').value = p.demo_url || '';
+                document.getElementById('academic_year').value = p.academic_year || '';
+                
+                // Check technologies
+                const techIds = p.technologies.map(t => t.id.toString());
+                document.querySelectorAll('input[name="technologies"]').forEach(cb => {
+                    if (techIds.includes(cb.value)) cb.checked = true;
+                });
+                
+                if (p.image_url) {
+                    existingImages = p.image_url.split(',').filter(url => url.trim() !== '');
+                    renderPreviews();
+                }
+            }
+        }
+
+        // Handle file selection
+        document.getElementById('images').addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            newFiles = newFiles.concat(files);
+            renderPreviews();
+            // Reset input so same file can be selected again if removed
+            e.target.value = '';
+        });
+
+        function renderPreviews() {
+            const container = document.getElementById('image-previews');
+            container.innerHTML = '';
+            
+            // Render existing server images
+            existingImages.forEach((url, index) => {
+                const card = document.createElement('div');
+                card.className = 'img-preview-card';
+                card.innerHTML = `
+                    <img src="${getImageUrl(url)}" alt="Preview">
+                    <button type="button" class="remove-btn" onclick="removeExistingImage(${index})">&times;</button>
+                `;
+                container.appendChild(card);
+            });
+            
+            // Render new files
+            newFiles.forEach((file, index) => {
+                const url = URL.createObjectURL(file);
+                const card = document.createElement('div');
+                card.className = 'img-preview-card';
+                card.innerHTML = `
+                    <img src="${url}" alt="Preview">
+                    <button type="button" class="remove-btn" onclick="removeNewFile(${index})">&times;</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.removeExistingImage = function(index) {
+            existingImages.splice(index, 1);
+            renderPreviews();
+        };
+
+        window.removeNewFile = function(index) {
+            newFiles.splice(index, 1);
+            renderPreviews();
+        };
+
+        document.getElementById('projectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorBox = document.getElementById('error-box');
+            
+            const technologies = Array.from(document.querySelectorAll('input[name="technologies"]:checked'))
+                                      .map(cb => parseInt(cb.value));
+            
+            const customTechString = document.getElementById('custom_technologies').value;
+            const newTechnologies = customTechString
+                .split(',')
+                .map(t => t.trim())
+                .filter(t => t.length > 0);
+            
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('category_id', document.getElementById('category_id').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('status', document.getElementById('status').value);
+            formData.append('github_url', document.getElementById('github_url').value);
+            formData.append('demo_url', document.getElementById('demo_url').value);
+            formData.append('academic_year', document.getElementById('academic_year').value);
+            
+            formData.append('technologies', JSON.stringify(technologies));
+            formData.append('new_technologies', JSON.stringify(newTechnologies));
+            formData.append('existing_images', JSON.stringify(existingImages));
+            
+            newFiles.forEach(file => {
+                formData.append('images', file);
+            });
+            
+            const endpoint = isEditMode ? `/projects/${projectId}` : '/projects';
+            const method = isEditMode ? 'PUT' : 'POST';
+            
+            const btn = document.querySelector('button[type="submit"]');
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+            
+            const res = await fetchAPI(endpoint, { method, body: formData });
+            
+            if (res.success) {
+                window.location.href = 'dashboard.html';
+            } else {
+                errorBox.textContent = res.error;
+                errorBox.style.display = 'block';
+                btn.textContent = 'Save Project';
+                btn.disabled = false;
+            }
+        });
+        
+        async function deleteProject() {
+            if (confirm("Are you sure you want to delete this project? This cannot be undone.")) {
+                const res = await fetchAPI(`/projects/${projectId}`, { method: 'DELETE' });
+                if (res.success) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert("Error deleting project: " + res.error);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
