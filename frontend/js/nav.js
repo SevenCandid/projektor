@@ -90,3 +90,34 @@ async function initSharedNav(activePage) {
 
     return authRes;
 }
+
+// Auto-hiding navbar logic based on user request:
+// Scroll Up -> disappear (add hidden classes)
+// Scroll Down -> reappear (remove hidden classes)
+let lastScrollY = window.scrollY;
+
+window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+    const topbar = document.querySelector('.topbar');
+    const mobileNav = document.querySelector('.mobile-nav');
+    
+    // Always show if we are at the very top
+    if (currentScroll <= 0) {
+        if (topbar) topbar.classList.remove('topbar-hidden');
+        if (mobileNav) mobileNav.classList.remove('mobile-nav-hidden');
+        lastScrollY = currentScroll;
+        return;
+    }
+
+    if (currentScroll > lastScrollY) {
+        // Scrolling DOWN
+        if (topbar) topbar.classList.remove('topbar-hidden');
+        if (mobileNav) mobileNav.classList.remove('mobile-nav-hidden');
+    } else if (currentScroll < lastScrollY) {
+        // Scrolling UP
+        if (topbar) topbar.classList.add('topbar-hidden');
+        if (mobileNav) mobileNav.classList.add('mobile-nav-hidden');
+    }
+    
+    lastScrollY = currentScroll;
+});

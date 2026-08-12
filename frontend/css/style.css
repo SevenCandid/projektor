@@ -676,32 +676,15 @@ main {
         margin-right: -1rem;
         width: calc(100% + 2rem);
         max-height: 70vh;
-        background: var(--bg-image);
-        /* height:auto ensures landscape scales down naturally without black bars */
+        object-fit: cover;
     }
     
     .smart-image-grid {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-        height: auto; 
         border-radius: 0;
         margin-left: -1rem;
         margin-right: -1rem;
         width: calc(100% + 2rem);
-        gap: 0;
-    }
-    .smart-image-grid img {
-        flex: 0 0 100%;
-        height: auto;
-        max-height: 70vh;
-        scroll-snap-align: center;
-        object-fit: contain;
-        background: var(--bg-image);
-    }
-    .more-images-overlay::after {
-        display: none; /* No overlay on mobile, user can swipe */
+        height: 300px;
     }
 }
 
@@ -724,7 +707,28 @@ main {
     cursor: pointer;
     font-size: 0.95rem;
     font-weight: 500;
-    transition: all 0.2s ease;
+}
+
+.interaction-btn:hover {
+    color: var(--primary);
+}
+
+.interaction-btn.liked {
+    color: var(--danger);
+}
+
+/* Auto-hiding Navbar Styles */
+.topbar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-nav {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.topbar-hidden {
+    transform: translateY(-100%);
+}
+.mobile-nav-hidden {
+    transform: translateY(100%);
 }
 
 .interaction-btn:hover {
