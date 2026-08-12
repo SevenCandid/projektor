@@ -58,7 +58,8 @@ function getImageUrl(path) {
     if (path.startsWith('http://') || path.startsWith('https://')) {
         return path;
     }
-    return `http://localhost:5000${path}`;
+    const backendBase = isLocalhost ? 'http://localhost:5000' : 'https://projektor.onrender.com';
+    return `${backendBase}${path}`;
 }
 
 function toggleTheme() {
